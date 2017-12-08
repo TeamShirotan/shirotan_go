@@ -9,15 +9,15 @@
 
 /**
  * ãƒãƒ¼ãƒˆã®æ¥ç¶šå¯¾å¿œ
+ * USonic sensor: Port 1
  * Color sensor_Red: Port 2
  * Color sensor: Port 3
- * USonic sensor: Port 4
  * Left  motor:  Port B
  * Right motor:  Port C
  */
+const int u_sonic_sensor = EV3_PORT_1;
 const int color_sensor_red = EV3_PORT_2;
 const int color_sensor = EV3_PORT_3;
-const int u_sonic_sensor = EV3_PORT_4;
 const int left_motor = EV3_PORT_B;
 const int right_motor = EV3_PORT_C;
 
@@ -52,14 +52,16 @@ void main_task(intptr_t unused) {
   double diff[2] = {0};
   double integral = 0;
 
-
   double p, i, d;
 
 	int cntred	=	0;
 	int isred_old	=	0;
 	int isred	=	0;
 	int cntpid	=	0;
-	
+
+  const int thr_dist1 = 10;
+  const int thr_dist2 = 100;
+  int dist = 0;
 	
   while(1){
     //æ˜ã‚‹ã•å–å¾—
@@ -81,6 +83,18 @@ void main_task(intptr_t unused) {
       steer = 100;
     }
 
+    //è·é›¢æƒ…å ±ã®å–å¾—
+    dist = ev3_ultrasonic_sensor_get_distance(u_sonic_sensor);
+    //è·é›¢å–å¾—ã‚¨ãƒ©ãƒ¼ã®å ´åˆç„¡è¦–ã™ã‚‹
+    if(dist == 0) continue;
+
+    //å£ãŒè¿‘ã„ã‹åˆ¤æ–­ã™ã‚‹
+    if(thr_dist2 < dist){
+      steer = 55;
+    }
+    else if(thr_dist1 > dist){
+      steer = 0;
+    }
     //ãƒ¢ãƒ¼ã‚¿æ“ä½œé‡ã‚’æ›´æ–°
     ev3_motor_steer(left_motor, right_motor, power, steer);
 
@@ -88,21 +102,21 @@ void main_task(intptr_t unused) {
     char msg[256]= {0};
 //   sprintf(msg, "reflect_val:%03d steer:%03d", sensor_val, steer);
 
-	//PID§Œä‚ğˆê‰ñ‚Ü‚í‚Á‚½‚çƒJƒEƒ“ƒgƒAƒbƒv
+	//PIDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Aï¿½bï¿½v
 	cntpid	+=1;
 	
 	
 	if( cntpid==40){
 	
 		cntpid = 0;
-		const int RED = COLOR_RED;  //ƒ‰ƒCƒ“‚ÌF‚ğ”F¯‚·‚éA¡‰ñ‚ÍuÔv
+		const int RED = COLOR_RED;  //ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ÌFï¿½ï¿½Fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½Íuï¿½Ôv
 		int color =  ev3_color_sensor_get_color(color_sensor_red);
 
 
-		// 1ŒÂ‘O‚ÌƒJƒ‰[”»’èŒ‹‰Ê‚ğ•Û‚µ‚Ä‚¨‚­
+		// 1ï¿½Â‘Oï¿½ÌƒJï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½èŒ‹ï¿½Ê‚ï¿½Ûï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
 		isred_old = isred;
 		
-		// ƒJƒ‰[”»’èŒ‹‰Ê
+		// ï¿½Jï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½èŒ‹ï¿½ï¿½
 		if( color == RED) {
 			isred = 1;
 		}
@@ -110,7 +124,7 @@ void main_task(intptr_t unused) {
 			isred = 0;
 		}
 
-		// ƒJƒ‰[”»’èŒ‹‰Ê‚ª0‚©‚ç1‚É•Ï‰»‚µ‚½‚çƒJƒEƒ“ƒgƒAƒbƒv
+		// ï¿½Jï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½èŒ‹ï¿½Ê‚ï¿½0ï¿½ï¿½ï¿½ï¿½1ï¿½É•Ï‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½Eï¿½ï¿½ï¿½gï¿½Aï¿½bï¿½v
 		if( (isred_old==0) && (isred==1) ) {
 			cntred += 1;
 			
@@ -123,7 +137,7 @@ void main_task(intptr_t unused) {
 
 
 
-	//PID‚ÌƒJƒEƒ“ƒg”‚ğ•\¦
+	//PIDï¿½ÌƒJï¿½Eï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½
 	char msg3[256]= {0};
 	char msg2[256]= {0};
 
@@ -132,7 +146,7 @@ void main_task(intptr_t unused) {
     ev3_lcd_draw_string(msg,0,20);
     sprintf(msg, "p:%03.3f i:%03.3f d:%03.3f", p, i, d);
     ev3_lcd_draw_string(msg,0,40);
-    sprintf(msg, "steer:%03d", steer);
+    sprintf(msg, "steer:%03d  dist:%03d", steer, dist);
     ev3_lcd_draw_string(msg,0,60);
 	sprintf(msg2, "redcount:%03d ",cntred);
 	ev3_lcd_draw_string(msg2,0,80);
