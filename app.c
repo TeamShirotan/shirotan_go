@@ -21,8 +21,8 @@ const int u_sonic_sensor = EV3_PORT_4;
 const int left_motor = EV3_PORT_B;
 const int right_motor = EV3_PORT_C;
 
-const int left_arm = EV3_PORT_A;
-const int right_arm = EV3_PORT_D;
+//const int left_arm = EV3_PORT_A;
+//const int right_arm = EV3_PORT_D;
 
 
 //メインタスク
@@ -30,8 +30,8 @@ void main_task(intptr_t unused) {
   //モーターポートを設定 
   ev3_motor_config(left_motor, LARGE_MOTOR);
   ev3_motor_config(right_motor, LARGE_MOTOR);
-  ev3_motor_config(left_arm,LARGE_MOTOR);
-  ev3_motor_config(right_arm,LARGE_MOTOR);
+  //ev3_motor_config(left_arm,LARGE_MOTOR);
+  //ev3_motor_config(right_arm,LARGE_MOTOR);
   
   
   //センサーポートを設定
@@ -40,7 +40,7 @@ void main_task(intptr_t unused) {
   ev3_sensor_config(u_sonic_sensor, ULTRASONIC_SENSOR);
 
   //変数宣言
-  const int target_val = 56;  //明るさの目標値
+  const int target_val = 55;  //明るさの目標値
   const int power = 100;       //モーターパワーj
   int steer = 0;              //ハンドル操作量
 
@@ -48,7 +48,7 @@ void main_task(intptr_t unused) {
   const double KP = 2.0;     //比例項
   const double KI = 0.05;      //積分項
   const double KD = 0.0;      //微分項
-
+    
   double diff[2] = {0};
   double integral = 0;
 
@@ -113,7 +113,12 @@ void main_task(intptr_t unused) {
 		// �J���[���茋�ʂ�0����1�ɕω�������J�E���g�A�b�v
 		if( (isred_old==0) && (isred==1) ) {
 			cntred += 1;
-				}
+			
+		//	if(cntred == 5){
+		//	 ev3_motor_steer(left_motor, right_motor, 0 , 0);
+		//	 ev3_motor_steer(left_arm, right_arm, 30 , 0);
+		//	}
+		}
 	}
 
 
