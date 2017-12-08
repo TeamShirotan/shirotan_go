@@ -34,13 +34,13 @@ void main_task(intptr_t unused) {
   ev3_sensor_config(u_sonic_sensor, ULTRASONIC_SENSOR);
 
   //変数宣言
-  const int target_val = 20;  //明るさの目標値
-  const int power = 80;       //モーターパワーj
+  const int target_val = 56;  //明るさの目標値
+  const int power = 100;       //モーターパワーj
   int steer = 0;              //ハンドル操作量
 
   const double DELTA_T = 0.001;  //処理周期（msec）
-  const double KP = 6.5;     //比例項
-  const double KI = 5.0;      //積分項
+  const double KP = 2.0;     //比例項
+  const double KI = 0.0;      //積分項
   const double KD = 0.0;      //微分項
 
   double diff[2] = {0};
@@ -86,7 +86,7 @@ void main_task(intptr_t unused) {
 	cntpid	+=1;
 	
 	
-	if( cntpid==1000){
+	if( cntpid==40){
 	
 		cntpid = 0;
 		const int RED = COLOR_RED;  //���C���̐F��F������A����́u�ԁv
