@@ -21,13 +21,19 @@ const int u_sonic_sensor = EV3_PORT_4;
 const int left_motor = EV3_PORT_B;
 const int right_motor = EV3_PORT_C;
 
+const int left_arm = EV3_PORT_A;
+const int right_arm = EV3_PORT_D;
+
 
 //メインタスク
 void main_task(intptr_t unused) {
   //モーターポートを設定 
   ev3_motor_config(left_motor, LARGE_MOTOR);
   ev3_motor_config(right_motor, LARGE_MOTOR);
-
+  ev3_motor_config(left_arm,LARGE_MOTOR);
+  ev3_motor_config(right_arm,LARGE_MOTOR);
+  
+  
   //センサーポートを設定
   ev3_sensor_config(color_sensor_red, COLOR_SENSOR);
   ev3_sensor_config(color_sensor, COLOR_SENSOR);
@@ -40,7 +46,7 @@ void main_task(intptr_t unused) {
 
   const double DELTA_T = 0.001;  //処理周期（msec）
   const double KP = 2.0;     //比例項
-  const double KI = 0.0;      //積分項
+  const double KI = 0.05;      //積分項
   const double KD = 0.0;      //微分項
 
   double diff[2] = {0};
